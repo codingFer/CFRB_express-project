@@ -9,7 +9,15 @@ export const sequelize = new Sequelize(
         host: config.DB_HOST,
         port: config.DB_PORT,
         password: config.DB_PASSWORD,
-        dialect: 'mysql', //config.DB_DIALECT
-        logging: console.log()
+        dialect: config.DB_DIALECT,
+        logging: console.log(),
+        dialectOptions: config.DB_USE_SSL === 'true'
+        ? {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        }
+        : {}
     }
 )
