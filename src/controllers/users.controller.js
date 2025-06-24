@@ -8,7 +8,7 @@ const { Op } = require('sequelize');
 async function getUsers(req, res) {
     try {
         const users = await User.findAll({
-            attributes: ['id', 'username', 'status', 'password'],
+            attributes: ['id', 'username', 'password', 'status'],
             order: [['id', 'DESC']],
             where: {
                 status: Status.ACTIVE,
@@ -16,9 +16,8 @@ async function getUsers(req, res) {
         });
         return res.json(users);
     } catch (error) {
-        // logger.error(error.message);
-        // return res.status(500).json( { message: error.message})
-
+        logger.error(error.message);
+        return res.status(500).json( { message: error.message})
     }
 }
 
@@ -34,7 +33,6 @@ async function createUser(req, res) {
         logger.error(error.message);
         return res.status(500).json({ message: error.message })
     }
-
 }
 
 async function getUser(req, res, next) {
