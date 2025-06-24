@@ -9,7 +9,7 @@ router
     .post(taskController.createTask)
 
 router
-    .route('/id')
+    .route('/:id')
     .get(taskController.getTask)
     .put(taskController.updateTask)
     .delete(taskController.deleteTask)
