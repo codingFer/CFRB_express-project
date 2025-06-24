@@ -22,6 +22,8 @@ router
 
 router.get('/:id/tasks', authenticateToken, userController.getTasks);
 
+router.get('/list/pagination', authenticateToken, userController.getUsersPagination);
+
 // router.get('/', (req, res) => {
 //     res.json({
 //         message: 'Welcome to Users API'

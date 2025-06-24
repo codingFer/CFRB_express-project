@@ -34,7 +34,7 @@ async function createTask(req, res, next) {
     }
 }
 
-async function getTask(params) {
+async function getTask(req, res, next) {
     const {id} = req.params;
     const { userId } = req.user;
     try {

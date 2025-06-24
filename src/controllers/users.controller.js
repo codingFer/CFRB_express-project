@@ -22,7 +22,7 @@ async function getUsers(req, res) {
 }
 
 async function createUser(req, res) {
-    const  { username, password } = req.body;
+    const { username, password } = req.body;
     try {
         const user = await User.create({
             username,
@@ -31,9 +31,9 @@ async function createUser(req, res) {
         return res.json(user)
     } catch (error) {
         logger.error(error.message);
-        return res.status(500).json( { message: error.message})
+        return res.status(500).json({ message: error.message })
     }
-    
+
 }
 
 async function getUser(req, res, next) {
@@ -46,7 +46,7 @@ async function getUser(req, res, next) {
                 id
             }
         });
-        if (!user) res.status(400).json({ message: 'User not found'})
+        if (!user) res.status(400).json({ message: 'User not found' })
         res.json(user)
     } catch (error) {
         next(error)
@@ -55,10 +55,10 @@ async function getUser(req, res, next) {
 
 async function updateUser(req, res, next) {
     const { id } = req.params;
-    const { username, password }  = req.body;
+    const { username, password } = req.body;
     try {
         if (!username && !password) {
-            res.status(400).json({ message: 'Username or password is required'})
+            res.status(400).json({ message: 'Username or password is required' })
         }
         const passwordEncriptado = await encriptar(password);
         const user = await User.update({
@@ -84,7 +84,7 @@ async function deleteUser(req, res, next) {
                 id,
             }
         })
-        res.status(204).json({ message: 'User deleted'});
+        res.status(204).json({ message: 'User deleted' });
     } catch (error) {
         next(error)
     }
@@ -95,14 +95,14 @@ async function activateInactivate(req, res, next) {
     const { status } = req.body;
     try {
         if (!status) {
-            res.status(400).json({ message: 'Status is required'});
+            res.status(400).json({ message: 'Status is required' });
         }
         const user = await User.findByPk(id);
 
-        if (!user) res.status(404).json({ message: 'User not found'});
+        if (!user) res.status(404).json({ message: 'User not found' });
 
         if (user.status == status) {
-            res.status(409).json({ message: 'Same status'});
+            res.status(409).json({ message: 'Same status' });
         }
 
         user.status = status;
@@ -114,7 +114,7 @@ async function activateInactivate(req, res, next) {
 }
 
 async function getTasks(req, res, next) {
-    const { id} = req.params;
+    const { id } = req.params;
     try {
         const user = await User.findOne({
             attributes: ['username'],
@@ -135,6 +135,45 @@ async function getTasks(req, res, next) {
     }
 }
 
+async function getUsersPagination(req, res, next) {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const search = req.query.search || '';
+        const orderBy = ['id', 'username', 'status'].includes(req.query.orderBy) ? req.query.orderBy : 'id';
+        const orderDir = req.query.orderDir === 'ASC' ? 'ASC' : 'DESC';
+
+        const offset = (page - 1) * limit;
+
+        const whereClause = search
+            ? {
+                username: {
+                    [Op.iLike]: `%${search}%`
+                }
+            }
+            : {};
+
+        const { count: total, rows: data } = await User.findAndCountAll({
+            where: whereClause,
+            order: [[orderBy, orderDir]],
+            limit,
+            offset
+        });
+
+        const pages = Math.ceil(total / limit);
+
+        const user = {
+            total,
+            page,
+            pages,
+            data
+        };
+        res.json(user)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export default {
     getUsers,
     createUser,
@@ -143,4 +182,5 @@ export default {
     deleteUser,
     activateInactivate,
     getTasks,
+    getUsersPagination,
 };
