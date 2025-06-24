@@ -14,7 +14,7 @@ app.use(express.json());
 
 app.use('/api/users', userRoutes);
 app.use('/api/login', authRoutes);
-app.use('/api/task', authenticateToken, taskRoutes);
+app.use('/api/tasks', authenticateToken, taskRoutes);
 
 app.use(errorHandler);
 
