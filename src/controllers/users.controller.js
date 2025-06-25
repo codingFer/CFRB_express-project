@@ -17,7 +17,7 @@ async function getUsers(req, res) {
         return res.json(users);
     } catch (error) {
         logger.error(error.message);
-        return res.status(500).json( { message: error.message})
+        return res.status(500).json({ message: error.message })
     }
 }
 
@@ -137,7 +137,7 @@ async function getTasks(req, res, next) {
 async function getUsersPagination(req, res, next) {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = [5, 10, 15, 20].includes(parseInt(req.query.limit)) || 10;
         const search = req.query.search || '';
         const orderBy = ['id', 'username', 'status'].includes(req.query.orderBy) ? req.query.orderBy : 'id';
         const orderDir = req.query.orderDir === 'ASC' ? 'ASC' : 'DESC';

@@ -103,7 +103,7 @@ async function deleteTask(req, res, next) {
              }
         });
         if (task == 0) res.status(404).json({ message: 'Task not found'});
-        res.json({ message: 'Task deleted'});
+        res.status(204).json({ message: 'Task deleted'});
     } catch (error) {
         next(error);
     }
